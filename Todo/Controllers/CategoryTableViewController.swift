@@ -8,16 +8,20 @@
 
 import UIKit
 import CoreData
+import SwipeCellKit
 
 class CategoryTableViewController: UITableViewController {
     
     var categoryArray = [Category]()
+    var managedObject: [NSManagedObject] = []
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 
     override func viewDidLoad() {
         super.viewDidLoad()
         loadCategory()
+        
+        tableView.rowHeight = 75.0
 
     }
     
@@ -26,7 +30,14 @@ class CategoryTableViewController: UITableViewController {
         return categoryArray.count
     }
     
+//    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+//        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell") as! SwipeTableViewCell
+//        cell.delegate = self
+//        return cell
+//    }
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
         
         let category = categoryArray[indexPath.row]
@@ -95,11 +106,23 @@ class CategoryTableViewController: UITableViewController {
         
         tableView.reloadData()
     }
-    
-   
-    
-    
-    
-    
 }
 
+//Swipe cell delegate methods
+extension CategoryTableViewController{
+    
+//    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
+//        guard orientation == .right else { return nil }
+//
+//        let deleteAction = SwipeAction(style: .destructive, title: "Delete") { action, indexPath in
+//            // handle action by updating model with deletion
+//
+//            }
+//
+//
+//        // customize the action appearance
+//        deleteAction.image = UIImage(named: "delete-icon")
+//
+//        return [deleteAction]
+//    }
+}
