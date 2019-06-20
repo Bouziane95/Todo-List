@@ -9,19 +9,21 @@
 import UIKit
 import CoreData
 import SwipeCellKit
+import ChameleonFramework
 
 class CategoryTableViewController: UITableViewController {
     
     var categoryArray = [Category]()
     var managedObject: [NSManagedObject] = []
     
+    
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 
     override func viewDidLoad() {
         super.viewDidLoad()
         loadCategory()
-        
         tableView.rowHeight = 75.0
+        tableView.separatorStyle = .none
 
     }
     
@@ -30,18 +32,13 @@ class CategoryTableViewController: UITableViewController {
         return categoryArray.count
     }
     
-//    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell") as! SwipeTableViewCell
-//        cell.delegate = self
-//        return cell
-//    }
-    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
         
         let category = categoryArray[indexPath.row]
         cell.textLabel?.text = category.name
+        cell.backgroundColor = UIColor.randomFlat
         return cell
     }
     
@@ -69,6 +66,7 @@ class CategoryTableViewController: UITableViewController {
             
             let newCategory = Category(context: self.context)
             newCategory.name = textField.text!
+            newCategory.colour = UIColor.randomFlat.hexValue()
             self.categoryArray.append(newCategory)
             
             self.saveCategory()
@@ -110,19 +108,13 @@ class CategoryTableViewController: UITableViewController {
 
 //Swipe cell delegate methods
 extension CategoryTableViewController{
-    
-//    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
-//        guard orientation == .right else { return nil }
-//
-//        let deleteAction = SwipeAction(style: .destructive, title: "Delete") { action, indexPath in
-//            // handle action by updating model with deletion
-//
-//            }
-//
-//
-//        // customize the action appearance
-//        deleteAction.image = UIImage(named: "delete-icon")
-//
-//        return [deleteAction]
-//    }
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete{
+            context.delete(self.categoryArray[indexPath.row])
+            categoryArray.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+            saveCategory()
+            tableView.reloadData()
+        }
+    }
 }
